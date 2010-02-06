@@ -1,7 +1,7 @@
-Mti
+Mixed Table Inheritance
 ===
 
-Introduction goes here.
+Mixted Table Inheritance(MTI) mitigates the drawbacks of Single Table Inheritance(STI). Providing an elegant solution for cases where many models have a lot of common fields and functionality, but their great number of unique fields make STI infeasible.
 
 
 Example
@@ -9,5 +9,10 @@ Example
 
 Example goes here.
 
+To Do
+======
+Examples
+Tests
+Scaffold migration
 
 Copyright (c) 2010 [name of plugin creator], released under the MIT license
