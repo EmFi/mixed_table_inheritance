@@ -46,14 +46,15 @@ detail_base_name, @detail_class_path, @detail_file_path, @detail_class_nesting, 
       m.class_collisions class_name, "#{class_name}Test"
 
 # Model, test, and fixture directories.
- m.directory File.join('app/models', class_path)
+      m.directory File.join('app/models', class_path)
       m.directory File.join('test/unit', class_path)
       m.directory File.join('test/fixtures', class_path)
 
 
   # Model class, unit test, and fixtures.
 
-      m.template 'model.rb', File.join('app/models', class_path, "#{file_name}.rb")
+      model_file = File.join('app/models', class_path, "#{file_name}.rb")
+      m.template 'model.rb', model_file
       m.template 'model_detail.rb', File.join('app/models', detail_class_path, "#{file_name}_detail.rb")
       m.template 'unit_test.rb', File.join('test/unit', class_path, "#{file_name}_test.rb")
 

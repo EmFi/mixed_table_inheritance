@@ -1,18 +1,88 @@
 Mixed Table Inheritance
-===
+=======================
 
-Mixted Table Inheritance(MTI) mitigates the drawbacks of Single Table Inheritance(STI). Providing an elegant solution for cases where many models have a lot of common fields and functionality, but their great number of unique fields make STI infeasible.
+Mixed Table Inheritance(MTI) mitigates some of the drawbacks of Single Table
+Inheritance(STI). Providing an elegant solution for cases where models share
+common elements but have enough unique elements to make STI infeasible.
+
+MTI uses STI to store common fields and functionality of related models and
+offloads unique elements to another table. While seamlessly accessing both the
+common fields and functionality inherited through STI and the unique fields and
+functionality of the sub model.
+
+Usage
+=====
+
+To add Mixed Table Inheritance to a sub model just add the following line anywhere
+in the body of the inheriting model.
+
+  mti_subclass
+
+Mixed Table Inheritance uses Single Table Inheritance to store fields,
+associations, validations and other model logic common to your models. The specific
+fields for each submodel are stored in separate table for each submodel. Which means that
+Mixed Table Inheritance requires an additional table and model to operate.
+A generator is provided to create those models and migrations.
+
+$ script/generate mti_model <SubClassName> <ParentClassName> [attribute:type, attribute:type, ...]
+
+Where SubClassName is the name of inheriting class, ParentClassName is the name of the inherited
+class, either class name can be supplied in CamelCase or underscore_case. attribute:type follows
+the same syntax of script/generate model, and details the fields specific to SubClassName.
+
+If SubClassName doesn't exist it will be created and populated with mti_subclass.
+A migration creating a sub_class_name_details table and a corresponding model are
+also created by the migration.
 
 
 Example
 =======
 
-Example goes here.
+Take the relationship between the following models:
+
+Employee (fields: id, name, address, start date)
+SalariedEmployee (fields: id, name, address, start date, salary)
+ContractEmployee (fields: id, name, address, start date, salary, end date)
+HourlyEmployee (fields: id, name, address, start date, hours, rate)
+
+It is tempting to use SingleTableInheritance for this relationship, because of
+all the common fields and logic that can be put into the Employee model. However
+there are fields that will be never be used together. Mixed Table Inheritance
+gives you the advantages of Single Table Inheritance such as the guarantee that
+all decendents have access to the same fields and methods. While at the same time
+greatly cuts down on the wasted space in the database.
+
+To invoke mixed table inheritance add mti_subclass to your inheriting models.
+
+class Employee < ActiveRecord::Base
+  #common associations/validations/etc
+end
+
+class SalariedEmployee < Employee
+  mti_sublcass
+  # associations/validations/etc specific to SalariedEmployee
+  # ...
+end
+
+class ContractEmployee < Employee
+  mti_sublcass
+  # associations/validations/etc specific to ContractEmployee
+  # ...
+end
+
+class HourlyEmployee < Employee
+  mti_sublcass
+  # associations/validations/etc specific to HourlyEmployee
+  #  ...
+end
+
+$ script/generate mti_model SalariedEmployee Employee salary:integer
+$ script/generate mti_model ContractEmployee Employee salary:integer, end_date:date
+$ script/generate mti_model HourlyEmployee Employee rate:float, hours:string
 
 To Do
 ======
-Examples
+Documentation
 Tests
-Scaffold migration
 
 Copyright (c) 2010 [name of plugin creator], released under the MIT license

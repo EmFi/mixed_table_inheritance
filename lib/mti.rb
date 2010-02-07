@@ -19,23 +19,21 @@ module MTI
     end
 
     module InstanceMethods
-      def method_missing_with_detail_initialization (method, *args)
+      def method_missing (method, *args)
         build_mti_detail if mti_detail.nil?
         if mti_detail && mti_detail.respond_to?(method, true)
           mti_detail.send(method, *args)
         else 
-          method_missing_without_detail_initialization(method, *args)
+          super(method, *args)
         end
       end
 
-      def respond_to_with_detail_initialization?( method, include_private = false)
+      def respond_to?( method, include_private = false)
         build_mti_detail if mti_detail.nil?
-        respond_to_without_detail_initialization?(method, include_private) || 
+        super(method, include_private) || 
           mti_detail.respond_to?(method, include_private)
       end
      
-      alias_method_chain :method_missing, :detail_initialization
-      alias_method_chain :respond_to?, :detail_initialization
     end
   end
 end
